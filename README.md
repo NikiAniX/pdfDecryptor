@@ -1,6 +1,6 @@
 # pdfDecryptor
 
-Flask web app that decrypts password-protected PDF files and serves a dashboard UI.
+Flask API service that decrypts password-protected PDF files via a file upload endpoint.
 
 ## Project Structure
 
@@ -20,8 +20,11 @@ pdfDecryptor/
 │       └── services/       # Business logic (framework-free)
 │           ├── __init__.py
 │           └── pdf_service.py  # decrypt_pdf() + PdfDecryptResult
-├── static/                 # Frontend (CSS, JS)
-├── templates/              # Jinja2 templates
+├── tests/                  # Pytest suite (validators, service layer, routes)
+│   ├── conftest.py         # Shared fixtures (encrypted/plaintext PDF generators)
+│   ├── test_validators.py  # TestValidateFormInputs
+│   ├── test_pdf_service.py # TestPdfDecryptResult + TestDecryptPdf
+│   └── test_routes.py      # TestDecryptRoute (Flask integration)
 └── .venv/                  # Python virtual environment
 ```
 
@@ -41,6 +44,15 @@ pip install -r requirements.txt
 ```bash
 python app.py
 # → http://0.0.0.0:5005
+```
+
+## Testing
+
+Run the suite:
+
+```bash
+.venv/bin/python -m pytest tests/ -v
+# → 23 tests covering validators, service layer, and routes
 ```
 
 Environment overrides (optional):
@@ -123,11 +135,11 @@ Error response when the password is wrong:
 |---|---|
 | Web framework | [Flask](https://flask.palletsprojects.com/) (WSGI, micro-framework) |
 | PDF engine | [pypdf](https://github.com/py-pdf/pypdf) |
-| Frontend | Vanilla HTML / CSS / JS (Jinja2 templates) |
+| Testing | pytest (23 tests across validators, service layer, routes) |
 | Deployment | `python app.py` (dev server) — use Gunicorn for production |
 
 ## Design Decisions
 
 1. **Blueprints from JSON** — feature directories are loaded by `blueprints.json` at runtime, not hardcoded in Python. Adding a route = one new directory + one JSON line.
 2. **Each feature is self-contained** — services and validators live inside the module directory so they use relative imports (`from .validators.inputs import ...`).
-3. **Static paths anchored to `__file__`** — templates and static folders resolve correctly regardless of the working directory.
+3. **Validators never raise** — they return `(ok, messages)` tuples so routes stay thin.

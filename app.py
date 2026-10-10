@@ -8,7 +8,6 @@ new feature only requires writing a module directory and appending one JSON line
 from __future__ import annotations
 
 import json
-import os
 import sys
 from importlib import util
 from pathlib import Path
@@ -16,8 +15,6 @@ from flask import Flask
 
 # ── Paths -----------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent
-FLASK_TEMPLATE_DIR = BASE_DIR / "templates"
-FLASK_STATIC_DIR = BASE_DIR / "static"
 
 
 # ── Blueprint loading -----------------------------------------------------
@@ -56,17 +53,8 @@ def register_blueprints(app: Flask, config_file: str = "blueprints.json"):
 # ── App factory -----------------------------------------------------------
 def create_app() -> Flask:
     """Build the Flask application and register all blueprints."""
-    app = Flask(
-        __name__,
-        template_folder=str(FLASK_TEMPLATE_DIR),
-        static_folder=str(FLASK_STATIC_DIR),
-    )
+    app = Flask(__name__)
     register_blueprints(app)
-
-    @app.route("/")
-    def index():
-        from flask import render_template
-        return render_template("index.html")
 
     return app
 
