@@ -15,7 +15,7 @@ def decrypt():
         3. Return JSON with status and log lines.
     """
     # ── 1. Validate -----------------------------------------------------------
-    from validators.inputs import validate_form_inputs
+    from .validators.inputs import validate_form_inputs
 
     inputs = dict(request.form)
     if "pdf" in request.files and request.files["pdf"].filename:
@@ -36,7 +36,7 @@ def decrypt():
     request.files["pdf"].save(input_path)
 
     # ── 3. Service call -------------------------------------------------------
-    from services.pdf_service import decrypt_pdf
+    from .services.pdf_service import decrypt_pdf
 
     result = decrypt_pdf(input_path=input_path, output_path=output_path, password=password or "")
 
