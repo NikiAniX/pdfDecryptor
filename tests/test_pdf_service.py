@@ -1,4 +1,4 @@
-"""Tests for modules/decrypt/services/pdf_service.py."""
+"""Tests for modules/pdfDecryptor/services/pdf_service.py."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import os
 
 import pytest
 
-from modules.decrypt.services.pdf_service import PdfDecryptResult, decrypt_pdf
+from modules.pdfDecryptor.services.pdf_service import PdfDecryptResult, pdf_decrypt
 
 
 class TestPdfDecryptResult:
@@ -26,12 +26,12 @@ class TestPdfDecryptResult:
         assert r.output_path == "/out.pdf"
 
 
-class TestDecryptPdf:
+class TestPdfDecrypt:
     """Integration-style tests against real pypdf behaviour."""
 
     def test_encrypted_pdf_correct_password(self, encrypted_pdf: str, tmp_path: str) -> None:
         out = str(tmp_path) + "/decrypted.pdf"
-        result = decrypt_pdf(input_path=encrypted_pdf, output_path=out, password="test123")
+        result = pdf_decrypt(input_path=encrypted_pdf, output_path=out, password="test123")
 
         assert result.success is True
         assert result.message == "OK"
@@ -41,7 +41,7 @@ class TestDecryptPdf:
 
     def test_encrypted_pdf_wrong_password(self, encrypted_pdf: str, tmp_path: str) -> None:
         out = str(tmp_path) + "/decrypted.pdf"
-        result = decrypt_pdf(input_path=encrypted_pdf, output_path=out, password="wrong")
+        result = pdf_decrypt(input_path=encrypted_pdf, output_path=out, password="wrong")
 
         assert result.success is False
         assert result.message == "Incorrect password."
@@ -50,7 +50,7 @@ class TestDecryptPdf:
 
     def test_plain_pdf_no_password(self, plain_pdf: str, tmp_path: str) -> None:
         out = str(tmp_path) + "/plain_out.pdf"
-        result = decrypt_pdf(input_path=plain_pdf, output_path=out, password="")
+        result = pdf_decrypt(input_path=plain_pdf, output_path=out, password="")
 
         assert result.success is True
         assert any("not encrypted" in log for log in result.logs)
@@ -58,7 +58,7 @@ class TestDecryptPdf:
 
     def test_nonexistent_input_file(self, tmp_path: str) -> None:
         out = str(tmp_path) + "/out.pdf"
-        result = decrypt_pdf(input_path="/no/such/file.pdf", output_path=out)
+        result = pdf_decrypt(input_path="/no/such/file.pdf", output_path=out)
 
         assert result.success is False
         # On macOS the error may be "File not found" or a read-only FS error;
@@ -79,12 +79,12 @@ class TestDecryptPdf:
         with open(deep_input, "wb") as fh:
             writer.write(fh)
 
-        result = decrypt_pdf(input_path=deep_input, output_path=deep_output)
+        result = pdf_decrypt(input_path=deep_input, output_path=deep_output)
         assert result.success is True
         # output parent dir was auto-created
         assert os.path.isdir(os.path.dirname(deep_output))
 
     def test_result_contains_output_path_on_success(self, plain_pdf: str, tmp_path: str) -> None:
         out = str(tmp_path) + "/result.pdf"
-        result = decrypt_pdf(input_path=plain_pdf, output_path=out)
+        result = pdf_decrypt(input_path=plain_pdf, output_path=out)
         assert result.output_path == out

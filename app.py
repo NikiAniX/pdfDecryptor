@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent
 def load_blueprint(path: str, name: str):
     """Import a feature module by filesystem path and return its blueprint.
 
-    Each feature directory (e.g. ``modules/decrypt``) must contain an
+    Each feature directory (e.g. ``modules/pdfDecryptor``) must contain an
     ``__init__.py`` that re-exports the blueprint under *name*.
     """
     pkg_dir = (BASE_DIR / path).resolve()

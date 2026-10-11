@@ -1,4 +1,4 @@
-"""Tests for modules/decrypt/routes.py (Flask integration)."""
+"""Tests for modules/pdfDecryptor/routes.py (Flask integration)."""
 
 from __future__ import annotations
 
@@ -9,16 +9,16 @@ import pytest
 from flask import Flask
 
 # Import the blueprint directly so we can test it in isolation.
-from modules.decrypt import decrypt_bp
+from modules.pdfDecryptor import pdfDecryptor_bp
 
 
 @pytest.fixture()
 def app() -> Flask:
-    """Minimal Flask app with only the decrypt blueprint registered."""
+    """Minimal Flask app with only the pdfDecryptor blueprint registered."""
     from flask import Flask
 
     test_app = Flask(__name__)
-    test_app.register_blueprint(decrypt_bp, url_prefix="/decrypt")
+    test_app.register_blueprint(pdfDecryptor_bp, url_prefix="/pdfDecryptor")
     return test_app
 
 
@@ -27,13 +27,13 @@ def client(app: Flask):
     return app.test_client()
 
 
-class TestDecryptRoute:
-    """HTTP-level tests for POST /decrypt."""
+class TestPdfDecryptRoute:
+    """HTTP-level tests for POST /pdfDecryptor."""
 
     # ---- error cases -------------------------------------------------------
 
     def test_no_file_returns_400(self, client) -> None:
-        rv = client.post("/decrypt", data={})
+        rv = client.post("/pdfDecryptor", data={})
         assert rv.status_code == 400
         json = rv.get_json()
         assert json["status"] == "error"
@@ -45,7 +45,7 @@ class TestDecryptRoute:
             "encrypted_folder": "/in",
             "decrypted_folder": "/out",
         }
-        rv = client.post("/decrypt", data=data, content_type="multipart/form-data")
+        rv = client.post("/pdfDecryptor", data=data, content_type="multipart/form-data")
         assert rv.status_code == 400
         json = rv.get_json()
         assert json["status"] == "error"
@@ -58,7 +58,7 @@ class TestDecryptRoute:
             "pdf": (io.BytesIO(b"x"), "test.pdf"),
             "decrypted_folder": "/out",
         }
-        rv = client.post("/decrypt", data=data, content_type="multipart/form-data")
+        rv = client.post("/pdfDecryptor", data=data, content_type="multipart/form-data")
         assert rv.status_code == 400
         json = rv.get_json()
         assert json["status"] == "error"
@@ -69,7 +69,7 @@ class TestDecryptRoute:
             "pdf": (io.BytesIO(b"x"), "test.pdf"),
             "encrypted_folder": "/in",
         }
-        rv = client.post("/decrypt", data=data, content_type="multipart/form-data")
+        rv = client.post("/pdfDecryptor", data=data, content_type="multipart/form-data")
         assert rv.status_code == 400
         json = rv.get_json()
         assert json["status"] == "error"
@@ -93,7 +93,7 @@ class TestDecryptRoute:
             "encrypted_folder": str(tmp_path / "enc"),
             "decrypted_folder": out_dir,
         }
-        rv = client.post("/decrypt", data=data, content_type="multipart/form-data")
+        rv = client.post("/pdfDecryptor", data=data, content_type="multipart/form-data")
 
         assert rv.status_code == 200
         json = rv.get_json()

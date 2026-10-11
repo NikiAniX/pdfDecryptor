@@ -1,12 +1,12 @@
-"""Routes for the /decrypt feature."""
+"""Routes for the /pdfDecryptor feature."""
 
 from flask import Blueprint, jsonify, request
 
-bp = Blueprint("decrypt", __name__, url_prefix="/decrypt")
+bp = Blueprint("pdf_decryptor", __name__, url_prefix="/pdfDecryptor")
 
 
 @bp.route("", methods=["POST"])
-def decrypt():
+def pdf_decrypt():
     """Handle a PDF decryption upload.
 
     Flow::
@@ -36,9 +36,9 @@ def decrypt():
     request.files["pdf"].save(input_path)
 
     # ── 3. Service call -------------------------------------------------------
-    from .services.pdf_service import decrypt_pdf
+    from .services.pdf_service import pdf_decrypt
 
-    result = decrypt_pdf(input_path=input_path, output_path=output_path, password=password or "")
+    result = pdf_decrypt(input_path=input_path, output_path=output_path, password=password or "")
 
     if not result.success:
         return jsonify({"status": "error", "logs": result.logs})

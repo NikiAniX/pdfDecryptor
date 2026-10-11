@@ -10,7 +10,7 @@ python -m pytest       # run tests (if any)
 ## Core Rules
 
 - **No hardcoded imports** — all feature blueprints are declared in `blueprints.json` and loaded at runtime. Never add a `from . import X` for new modules; update the JSON instead.
-- **File upload validation** — always merge `request.form` + `request.files` into one dict before passing to validators (see `modules/decrypt/routes.py`).
+- **File upload validation** — always merge `request.form` + `request.files` into one dict before passing to validators (see `modules/pdfDecryptor/routes.py`).
 - **External plugins** use a `"path"` in blueprints.json that points to an **absolute filesystem path** (not an import name).
 
 ## Architecture
@@ -21,15 +21,15 @@ pdfDecryptor/
 ├── blueprints.json           # manifest: directory → blueprint name → URL prefix
 ├── requirements.txt          # Dependencies
 ├── modules/                  # Feature directories — one per plugin/blueprint
-│   └── decrypt/              # PDF decryption feature (self-contained)
-│       ├── __init__.py       # exports decrypt_bp
-│       ├── routes.py         # /decrypt POST handler
+│   └── pdfDecryptor/         # PDF decryption feature (self-contained)
+│       ├── __init__.py       # exports pdfDecryptor_bp
+│       ├── routes.py         # /pdfDecryptor POST handler
 │       ├── validators/       # input validation (relative imports)
 │       │   ├── __init__.py
 │       │   └── inputs.py     # validate_form_inputs()
 │       └── services/         # business logic (framework-free)
 │           ├── __init__.py
-│           └── pdf_service.py  # decrypt_pdf() + PdfDecryptResult
+│           └── pdf_service.py  # pdf_decrypt() + PdfDecryptResult
 ├── tests/                    # Pytest suite (23 tests)
 └── .venv/                    # Python virtual environment
 ```
@@ -46,7 +46,7 @@ pdfDecryptor/
 1. Create `modules/<name>/__init__.py` that re-exports the blueprint under the configured `"name"` key.
 2. Append to `blueprints.json`:
    ```json
-   { "path": "modules/<name>", "name": "<bp_name>", "url_prefix": "/<prefix>" }
+   { "path": "modules/pdfDecryptor", "name": "pdfDecryptor_bp", "url_prefix": "/pdfDecryptor" }
    ```
 
 ## Dependencies

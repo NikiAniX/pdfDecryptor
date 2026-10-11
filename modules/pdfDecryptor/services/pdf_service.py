@@ -18,7 +18,7 @@ class PdfDecryptResult:
     output_path: str | None = None
 
 
-def decrypt_pdf(
+def pdf_decrypt(
     input_path: str,
     output_path: str,
     password: str = "",

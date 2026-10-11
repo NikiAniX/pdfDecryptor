@@ -11,20 +11,20 @@ pdfDecryptor/
 ├── requirements.txt        # Dependencies
 ├── modules/                # Feature directories — one per plugin/blueprint
 │   ├── __init__.py
-│   └── decrypt/            # PDF decryption feature
-│       ├── __init__.py     # Exports decrypt_bp
-│       ├── routes.py       # /decrypt POST route handler
+│   └── pdfDecryptor/       # PDF decryption feature
+│       ├── __init__.py     # Exports pdfDecryptor_bp
+│       ├── routes.py       # /pdfDecryptor POST route handler
 │       ├── validators/     # Input validation (relative imports)
 │       │   ├── __init__.py
 │       │   └── inputs.py   # validate_form_inputs()
 │       └── services/       # Business logic (framework-free)
 │           ├── __init__.py
-│           └── pdf_service.py  # decrypt_pdf() + PdfDecryptResult
+│           └── pdf_service.py  # pdf_decrypt() + PdfDecryptResult
 ├── tests/                  # Pytest suite (validators, service layer, routes)
 │   ├── conftest.py         # Shared fixtures (encrypted/plaintext PDF generators)
 │   ├── test_validators.py  # TestValidateFormInputs
-│   ├── test_pdf_service.py # TestPdfDecryptResult + TestDecryptPdf
-│   └── test_routes.py      # TestDecryptRoute (Flask integration)
+│   ├── test_pdf_service.py # TestPdfDecryptResult + TestPdfDecrypt
+│   └── test_routes.py      # TestPdfDecryptRoute (Flask integration)
 └── .venv/                  # Python virtual environment
 ```
 
@@ -73,9 +73,9 @@ Every feature lives as a directory under `modules/`. To register one:
 {
   "blueprints": [
     {
-      "path": "modules/decrypt",
-      "name": "decrypt_bp",
-      "url_prefix": "/decrypt"
+      "path": "modules/pdfDecryptor",
+      "name": "pdfDecryptor_bp",
+      "url_prefix": "/pdfDecryptor"
     },
     {
       "path": "modules/audit",
@@ -90,7 +90,7 @@ No edits to `app.py` are needed. The loader reads `blueprints.json` at startup, 
 
 ## API
 
-### POST `/decrypt`
+### POST `/pdfDecryptor`
 
 Uploads a password-protected PDF for decryption.
 

@@ -1,9 +1,9 @@
 {
   "blueprints": [
     {
-      "path": "modules/decrypt",
-      "name": "decrypt_bp",
-      "url_prefix": "/decrypt"
+      "path": "modules/pdfDecryptor",
+      "name": "pdfDecryptor_bp",
+      "url_prefix": "/pdfDecryptor"
     }
   ]
 }

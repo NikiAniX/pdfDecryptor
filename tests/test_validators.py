@@ -1,4 +1,4 @@
-"""Tests for modules/decrypt/validators/inputs.py."""
+"""Tests for modules/pdfDecryptor/validators/inputs.py."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import io
 
 import pytest
 
-from modules.decrypt.validators.inputs import validate_form_inputs
+from modules.pdfDecryptor.validators.inputs import validate_form_inputs
 
 
 class MockFile:
