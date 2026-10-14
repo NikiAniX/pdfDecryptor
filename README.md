@@ -8,6 +8,7 @@ Flask API service that decrypts password-protected PDF files via a file upload e
 pdfDecryptor/
 ├── app.py                  # Bootstrap — loads blueprints from JSON, creates Flask app
 ├── blueprints.json         # Feature manifest (add plugins without touching code)
+├── swagger.json            # OpenAPI 3.0 spec for the API (documentation only, no routes)
 ├── requirements.txt        # Dependencies
 ├── modules/                # Feature directories — one per plugin/blueprint
 │   ├── __init__.py
@@ -89,6 +90,8 @@ Every feature lives as a directory under `modules/`. To register one:
 No edits to `app.py` are needed. The loader reads `blueprints.json` at startup, imports each module by path, and calls `getattr(module, name)`.
 
 ## API
+
+An OpenAPI 3.0 description of the API lives in [`swagger.json`](swagger.json). It is documentation only — the app does not serve it; load it into Swagger Editor / Swagger UI / Postman to explore.
 
 ### POST `/pdfDecryptor`
 
