@@ -19,6 +19,7 @@ python -m pytest       # run tests (if any)
 pdfDecryptor/
 ├── app.py                    # entry point — loader + factory + server
 ├── blueprints.json           # manifest: directory → blueprint name → URL prefix
+├── swagger.json              # OpenAPI 3.0 spec (static docs; no route serves it) — update when API changes
 ├── requirements.txt          # Dependencies
 ├── modules/                  # Feature directories — one per plugin/blueprint
 │   └── pdfDecryptor/         # PDF decryption feature (self-contained)
