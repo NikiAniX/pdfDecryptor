@@ -1,0 +1,118 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "pdfDecryptor API",
+    "description": "Flask API service that decrypts password-protected PDF files via a file upload endpoint.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "http://localhost:5005", "description": "Local dev server (PDF_HOST / PDF_PORT)" }
+  ],
+  "paths": {
+    "/pdfDecryptor": {
+      "post": {
+        "tags": ["pdfDecryptor"],
+        "summary": "Decrypt an uploaded PDF",
+        "description": "Saves the uploaded PDF into `encrypted_folder`, decrypts it with the given password, writes the result to `decrypted_folder`, and removes the temporary encrypted copy. Note: a decryption failure (e.g. wrong password) returns HTTP 200 with `status: error`; only validation failures return HTTP 400.",
+        "operationId": "pdfDecrypt",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["encrypted_folder", "decrypted_folder", "pdf"],
+                "properties": {
+                  "encrypted_folder": {
+                    "type": "string",
+                    "description": "Folder to save the upload before processing",
+                    "example": "/data/encrypted"
+                  },
+                  "decrypted_folder": {
+                    "type": "string",
+                    "description": "Destination folder for the decrypted output",
+                    "example": "/data/decrypted"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Password used in the PDF decryption attempt",
+                    "format": "password"
+                  },
+                  "pdf": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The encrypted PDF file"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Processing finished. Check `status` for success or decryption failure.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PdfDecryptResponse" },
+                "examples": {
+                  "success": {
+                    "summary": "Decrypted successfully",
+                    "value": {
+                      "status": "success",
+                      "logs": [
+                        "Opened PDF file.",
+                        "PDF is encrypted. Attempting decryption …",
+                        "Decryption successful.",
+                        "Written decrypted PDF → /path/to/output.pdf",
+                        "Removed temporary encrypted copy from /path/to/encrypted.pdf"
+                      ]
+                    }
+                  },
+                  "wrongPassword": {
+                    "summary": "Incorrect password",
+                    "value": {
+                      "status": "error",
+                      "logs": [
+                        "Opened PDF file.",
+                        "PDF is encrypted. Attempting decryption …",
+                        "Failed: Incorrect password."
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed (missing/empty PDF or missing folder path).",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PdfDecryptResponse" },
+                "example": {
+                  "status": "error",
+                  "logs": ["Encrypted folder path is required."]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PdfDecryptResponse": {
+        "type": "object",
+        "required": ["status", "logs"],
+        "properties": {
+          "status": { "type": "string", "enum": ["success", "error"] },
+          "logs": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Ordered log lines from the decrypt pipeline or the validation error message"
+          }
+        }
+      }
+    }
+  }
+}
